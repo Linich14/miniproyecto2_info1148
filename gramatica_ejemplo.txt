@@ -1,0 +1,10 @@
+# Gramática de Expresiones Aritméticas
+# Formato: NoTerminal -> Simbolo1 Simbolo2 ...
+# Una producción por línea
+
+E -> E + T
+E -> T
+T -> T * F
+T -> F
+F -> ( E )
+F -> id

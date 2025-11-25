@@ -111,7 +111,7 @@ public class GeneradorDerivaciones
             }
 
             // Aplicar un paso de derivación por la izquierda
-            formaSentencial = DerivacionPorLaIzquierda(formaSentencial);
+            formaSentencial = DerivacionPorLaIzquierda(formaSentencial, pasos);
             pasos++;
         }
 
@@ -124,8 +124,9 @@ public class GeneradorDerivaciones
     /// Expande el primer no terminal encontrado de izquierda a derecha.
     /// </summary>
     /// <param name="formaSentencial">La forma sentencial actual.</param>
+    /// <param name="pasos">Número de pasos ya realizados.</param>
     /// <returns>Nueva forma sentencial después de la expansión.</returns>
-    private List<Symbol> DerivacionPorLaIzquierda(List<Symbol> formaSentencial)
+    private List<Symbol> DerivacionPorLaIzquierda(List<Symbol> formaSentencial, int pasos)
     {
         var nuevaForma = new List<Symbol>();
         bool expandido = false;
@@ -137,7 +138,8 @@ public class GeneradorDerivaciones
             // Expandir el primer no terminal encontrado
             if (!expandido && simbolo is NonTerminal noTerminal)
             {
-                var produccion = SeleccionarProduccionAleatoria(noTerminal);
+                int pasosRestantes = _profundidadMaxima - pasos;
+                var produccion = SeleccionarProduccionAleatoria(noTerminal, pasosRestantes);
                 
                 // Agregar los símbolos del lado derecho de la producción
                 nuevaForma.AddRange(produccion.LadoDerecho);
@@ -172,17 +174,20 @@ public class GeneradorDerivaciones
     /// <returns>Lista de símbolos resultantes de la expansión.</returns>
     public List<Symbol> ExpandirNoTerminal(NonTerminal noTerminal)
     {
-        var produccion = SeleccionarProduccionAleatoria(noTerminal);
+        var produccion = SeleccionarProduccionAleatoria(noTerminal, int.MaxValue);
         return new List<Symbol>(produccion.LadoDerecho);
     }
 
     /// <summary>
     /// Selecciona aleatoriamente una producción válida para un no terminal dado.
+    /// Usa una estrategia inteligente: cuando está cerca del límite de profundidad,
+    /// prefiere producciones que no tienen recursión izquierda.
     /// </summary>
     /// <param name="noTerminal">El no terminal para el cual seleccionar una producción.</param>
+    /// <param name="pasosRestantes">Pasos restantes antes de alcanzar la profundidad máxima.</param>
     /// <returns>La producción seleccionada.</returns>
     /// <exception cref="InvalidOperationException">Si no hay producciones para el no terminal.</exception>
-    private Production SeleccionarProduccionAleatoria(NonTerminal noTerminal)
+    private Production SeleccionarProduccionAleatoria(NonTerminal noTerminal, int pasosRestantes = int.MaxValue)
     {
         var producciones = _gramatica.ObtenerProduccionesPara(noTerminal);
 
@@ -190,6 +195,21 @@ public class GeneradorDerivaciones
         {
             throw new InvalidOperationException(
                 $"No hay producciones definidas para el no terminal '{noTerminal.Valor}'");
+        }
+
+        // Si quedan pocos pasos, preferir producciones sin recursión izquierda
+        if (pasosRestantes < _profundidadMaxima / 3)
+        {
+            // Filtrar producciones que NO tienen recursión izquierda
+            var produccionesNoRecursivas = producciones.Where(p =>
+                p.LadoDerecho.Count == 0 || 
+                !(p.LadoDerecho[0] is NonTerminal nt && nt.Equals(noTerminal))
+            ).ToList();
+
+            if (produccionesNoRecursivas.Count > 0)
+            {
+                producciones = produccionesNoRecursivas;
+            }
         }
 
         // Seleccionar aleatoriamente una producción

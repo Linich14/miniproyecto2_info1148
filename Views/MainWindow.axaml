@@ -3,18 +3,403 @@
         xmlns:vm="using:miniproyecto2_info1148.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="800"
         x:Class="miniproyecto2_info1148.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="miniproyecto2_info1148">
+        Title="Generador de Casos de Prueba - Gramáticas Libres de Contexto"
+        Width="1400" Height="800"
+        Background="#F5F5F5">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
+        <!-- Header -->
+        <Border Grid.Row="0" Background="#2C3E50" CornerRadius="8" Padding="20" Margin="0,0,0,20">
+            <StackPanel>
+                <TextBlock Text="🧬 Generador de Casos de Prueba" 
+                           FontSize="28" FontWeight="Bold" 
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Basado en Gramáticas Libres de Contexto (GLC)" 
+                           FontSize="14" 
+                           Foreground="#ECF0F1"
+                           HorizontalAlignment="Center"
+                           Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel: Configuration and Actions -->
+            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="20" 
+                    BoxShadow="0 2 10 #20000000">
+                <ScrollViewer>
+                    <StackPanel Spacing="15">
+                        <!-- Grammar Section -->
+                        <TextBlock Text="📚 Gramática" 
+                                   FontSize="16" FontWeight="Bold" 
+                                   Foreground="#2C3E50"/>
+                        
+                        <Button Content="📂 Cargar desde archivo (.txt)"
+                                Command="{Binding CargarGramaticaCommand}"
+                                Background="#9B59B6"
+                                Foreground="White"
+                                Padding="12,8"
+                                CornerRadius="6"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                FontSize="12">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#8E44AD"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Separator Height="1" Background="#BDC3C7" Margin="0,5"/>
+
+                        <!-- Configuration Section -->
+                        <TextBlock Text="⚙️ Configuración" 
+                                   FontSize="16" FontWeight="Bold" 
+                                   Foreground="#2C3E50"/>
+
+                        <StackPanel Spacing="10">
+                            <!-- Profundidad -->
+                            <StackPanel>
+                                <TextBlock Text="Profundidad Máxima:" 
+                                           FontWeight="SemiBold"
+                                           FontSize="13"
+                                           Foreground="#34495E"
+                                           Margin="0,0,0,5"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Grid.Column="0" 
+                                            Minimum="5" Maximum="100" 
+                                            Value="{Binding ProfundidadMaxima}"
+                                            TickFrequency="5"
+                                            IsSnapToTickEnabled="True"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding ProfundidadMaxima}" 
+                                               FontWeight="Bold"
+                                               FontSize="14"
+                                               Foreground="#E74C3C"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- Válidos -->
+                            <StackPanel>
+                                <TextBlock Text="Casos Válidos:" 
+                                           FontWeight="SemiBold"
+                                           FontSize="13"
+                                           Foreground="#34495E"
+                                           Margin="0,0,0,5"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Grid.Column="0" 
+                                            Minimum="1" Maximum="20" 
+                                            Value="{Binding CantidadCadenas}"
+                                            TickFrequency="1"
+                                            IsSnapToTickEnabled="True"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding CantidadCadenas}" 
+                                               FontWeight="Bold"
+                                               FontSize="14"
+                                               Foreground="#27AE60"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- Inválidos -->
+                            <StackPanel>
+                                <TextBlock Text="Casos Inválidos:" 
+                                           FontWeight="SemiBold"
+                                           FontSize="13"
+                                           Foreground="#34495E"
+                                           Margin="0,0,0,5"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="50"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Slider Grid.Column="0" 
+                                            Minimum="1" Maximum="20" 
+                                            Value="{Binding CantidadInvalidos}"
+                                            TickFrequency="1"
+                                            IsSnapToTickEnabled="True"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding CantidadInvalidos}" 
+                                               FontWeight="Bold"
+                                               FontSize="14"
+                                               Foreground="#E74C3C"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Separator Height="1" Background="#BDC3C7" Margin="0,10"/>
+
+                        <!-- Quick Actions -->
+                        <TextBlock Text="🚀 Acciones Rápidas" 
+                                   FontSize="16" FontWeight="Bold" 
+                                   Foreground="#2C3E50"/>
+
+                        <Button Content="🔍 Caso Válido + Historial"
+                                Command="{Binding GenerarCadenaConHistorialCommand}"
+                                Background="#27AE60"
+                                Foreground="White"
+                                Padding="12,10"
+                                CornerRadius="6"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#229954"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Content="✓ Casos Válidos"
+                                Command="{Binding GenerarMultiplesCadenasCommand}"
+                                Background="#3498DB"
+                                Foreground="White"
+                                Padding="12,10"
+                                CornerRadius="6"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#2E86C1"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Content="✗ Casos Inválidos"
+                                Command="{Binding GenerarCasosInvalidosCommand}"
+                                Background="#E74C3C"
+                                Foreground="White"
+                                Padding="12,10"
+                                CornerRadius="6"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#C0392B"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Content="⚡ Casos Extremos"
+                                Command="{Binding GenerarCasosExtremosCommand}"
+                                Background="#F39C12"
+                                Foreground="White"
+                                Padding="12,10"
+                                CornerRadius="6"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#E67E22"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Separator Height="1" Background="#BDC3C7" Margin="0,10"/>
+
+                        <!-- Main Actions -->
+                        <TextBlock Text="📊 Suite Completa" 
+                                   FontSize="16" FontWeight="Bold" 
+                                   Foreground="#2C3E50"/>
+
+                        <Button Content="🎯 Generar Todo"
+                                Command="{Binding GenerarSuiteCompletaCommand}"
+                                Background="#16A085"
+                                Foreground="White"
+                                Padding="15,12"
+                                CornerRadius="6"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#138D75"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Content="💾 Exportar JSON"
+                                Command="{Binding ExportarJSONCommand}"
+                                Background="#8E44AD"
+                                Foreground="White"
+                                Padding="12,10"
+                                CornerRadius="6"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#7D3C98"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+
+                        <Button Content="🗑️ Limpiar"
+                                Command="{Binding LimpiarResultadosCommand}"
+                                Background="#95A5A6"
+                                Foreground="White"
+                                Padding="12,10"
+                                CornerRadius="6"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover">
+                                    <Setter Property="Background" Value="#7F8C8D"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Right Panel: Results -->
+            <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="20"
+                    BoxShadow="0 2 10 #20000000">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Results Header -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                        <TextBlock Text="📋 Resultados" 
+                                   FontSize="18" FontWeight="Bold" 
+                                   Foreground="#2C3E50"/>
+                        
+                        <Border Background="#E8F8F5" 
+                                CornerRadius="6" 
+                                Padding="12"
+                                Margin="0,10,0,0"
+                                IsVisible="{Binding ResultadosGeneracion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                            <TextBlock Text="{Binding ResultadosGeneracion}" 
+                                       TextWrapping="Wrap"
+                                       Foreground="#16A085"
+                                       FontSize="13"/>
+                        </Border>
+                    </StackPanel>
+
+                    <!-- Results Content -->
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel Spacing="15">
+                            <!-- Cases List -->
+                            <StackPanel IsVisible="{Binding CadenasGeneradas.Count}">
+                                <TextBlock Text="📝 Casos Generados:" 
+                                           FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="#2C3E50"
+                                           Margin="0,0,0,10"/>
+                                
+                                <ItemsControl ItemsSource="{Binding CadenasGeneradas}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#F8F9FA" 
+                                                    CornerRadius="4" 
+                                                    Padding="12,8"
+                                                    Margin="0,0,0,6"
+                                                    BorderBrush="#DEE2E6"
+                                                    BorderThickness="1">
+                                                <TextBlock Text="{Binding}" 
+                                                           FontFamily="Consolas,Courier New,monospace"
+                                                           FontSize="12"
+                                                           Foreground="#2C3E50"
+                                                           TextWrapping="Wrap"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <!-- Derivation History -->
+                            <StackPanel IsVisible="{Binding MostrarHistorial}">
+                                <TextBlock Text="🔍 Historial de Derivación:" 
+                                           FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="#2C3E50"
+                                           Margin="0,10,0,10"/>
+                                
+                                <Border Background="#FFF9E6" 
+                                        CornerRadius="6" 
+                                        Padding="15"
+                                        BorderBrush="#F39C12"
+                                        BorderThickness="2">
+                                    <ScrollViewer MaxHeight="300">
+                                        <TextBlock Text="{Binding HistorialDerivacion}" 
+                                                   FontFamily="Consolas,Courier New,monospace"
+                                                   FontSize="11"
+                                                   Foreground="#7D6608"
+                                                   TextWrapping="Wrap"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+
+                            <!-- Metrics Report -->
+                            <StackPanel IsVisible="{Binding MostrarMetricas}">
+                                <TextBlock Text="📊 Reporte de Métricas:" 
+                                           FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="#2C3E50"
+                                           Margin="0,10,0,10"/>
+                                
+                                <Border Background="#E8F4F8" 
+                                        CornerRadius="6" 
+                                        Padding="15"
+                                        BorderBrush="#3498DB"
+                                        BorderThickness="2">
+                                    <ScrollViewer MaxHeight="400">
+                                        <TextBlock Text="{Binding ReporteMetricas}" 
+                                                   FontFamily="Consolas,Courier New,monospace"
+                                                   FontSize="11"
+                                                   Foreground="#1F618D"
+                                                   TextWrapping="NoWrap"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
 </Window>
