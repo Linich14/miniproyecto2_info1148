@@ -45,8 +45,20 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _mostrarMetricas = false;
 
+    [ObservableProperty]
+    private int _longitudMaxima = 100;
+
+    [ObservableProperty]
+    private string _archivoGramaticaCargado = "Gramática predeterminada";
+
     // Colecciones observables
     public ObservableCollection<string> CadenasGeneradas { get; } = new();
+    
+    /// <summary>
+    /// Colección observable de casos de prueba para el DataGrid.
+    /// Incluye: cadena, categoría, longitud, profundidad y métricas asociadas.
+    /// </summary>
+    public ObservableCollection<CasoPruebaViewModel> CasosPrueba { get; } = new();
 
     // Backend
     private GramaticaExpresionesAritmeticas? _gramaticaDefault;
@@ -274,11 +286,18 @@ public partial class MainWindowViewModel : ViewModelBase
             MostrarHistorial = false;
             MostrarMetricas = true;
 
-            // Mostrar algunos ejemplos
+            // Mostrar algunos ejemplos en lista
             CadenasGeneradas.Clear();
             foreach (var caso in _todosLosCasos.Take(20))
             {
                 CadenasGeneradas.Add($"[{caso.Categoria}] {caso.Cadena}");
+            }
+
+            // Actualizar DataGrid con todos los casos
+            CasosPrueba.Clear();
+            foreach (var caso in _todosLosCasos)
+            {
+                CasosPrueba.Add(new CasoPruebaViewModel(caso));
             }
         }
         catch (Exception ex)
@@ -340,9 +359,9 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            // Cargar desde la carpeta del proyecto
+            // Intentar cargar desde carpeta Assets primero
             var rutaProyecto = AppDomain.CurrentDomain.BaseDirectory;
-            var rutaArchivo = Path.Combine(rutaProyecto, "gramatica_ejemplo.txt");
+            var rutaArchivo = Path.Combine(rutaProyecto, "Assets", "gramatica_ejemplo.txt");
 
             if (File.Exists(rutaArchivo))
             {
@@ -350,22 +369,32 @@ public partial class MainWindowViewModel : ViewModelBase
                 _gramaticaActual = parser.CargarDesdeArchivo(rutaArchivo);
                 
                 GramaticaInfo = _gramaticaActual.ToString();
+                ArchivoGramaticaCargado = "Assets/gramatica_ejemplo.txt";
                 
                 ResultadosGeneracion = $"✅ Gramática cargada exitosamente!\n\n" +
-                                       $"Archivo: gramatica_ejemplo.txt\n" +
+                                       $"Archivo: Assets/gramatica_ejemplo.txt\n" +
                                        $"Variables: {_gramaticaActual.Variables.Count}\n" +
                                        $"Terminales: {_gramaticaActual.Terminales.Count}\n" +
                                        $"Producciones: {_gramaticaActual.Producciones.Count}";
             }
             else
             {
-                ResultadosGeneracion = "ℹ️ Para cargar una gramática:\n\n" +
-                                       $"1. Crea un archivo 'gramatica_ejemplo.txt' en la carpeta del proyecto\n" +
-                                       "2. Formato:\n" +
+                ResultadosGeneracion = "ℹ️ Para cargar una gramática personalizada:\n\n" +
+                                       "1. Crea un archivo 'gramatica_ejemplo.txt' en:\n" +
+                                       $"   {Path.Combine(rutaProyecto, "Assets")}\n\n" +
+                                       "2. Formato del archivo:\n" +
                                        "   E -> E + T\n" +
                                        "   E -> T\n" +
                                        "   T -> T * F\n" +
-                                       "   etc.\n\n" +
+                                       "   T -> F\n" +
+                                       "   F -> ( E )\n" +
+                                       "   F -> id\n\n" +
+                                       "3. Convenciones:\n" +
+                                       "   • Mayúsculas = No terminales\n" +
+                                       "   • Minúsculas/símbolos = Terminales\n" +
+                                       "   • Usa '->' para separar lados\n" +
+                                       "   • Un espacio entre símbolos\n" +
+                                       "   • Líneas con # son comentarios\n\n" +
                                        "Por ahora, se usa la gramática predeterminada de expresiones aritméticas.";
             }
         }
@@ -373,7 +402,13 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             ResultadosGeneracion = $"❌ Error al cargar gramática:\n{ex.Message}\n\n" +
                                    "Revisa el formato del archivo. Debe ser:\n" +
-                                   "NoTerminal -> Simbolo1 Simbolo2 ...";
+                                   "NoTerminal -> Simbolo1 Simbolo2 ...\n\n" +
+                                   "Ejemplo válido:\n" +
+                                   "E -> E + T\n" +
+                                   "E -> T";
+            
+            // Volver a la gramática predeterminada
+            InicializarGramatica();
         }
     }
 
@@ -387,6 +422,7 @@ public partial class MainWindowViewModel : ViewModelBase
         HistorialDerivacion = string.Empty;
         ReporteMetricas = string.Empty;
         CadenasGeneradas.Clear();
+        CasosPrueba.Clear();
         _todosLosCasos.Clear();
         MostrarHistorial = false;
         MostrarMetricas = false;
