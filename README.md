@@ -448,15 +448,15 @@ El sistema implementa derivación formal, mutación sintáctica y generación de
 
 ---
 
-## ✨ Funcionalidades Implementadas
+## Funcionalidades Implementadas
 
-### 1. **Generación de Casos Válidos** ✅
+### 1. Generación de Casos Válidos
 - Derivación leftmost (por la izquierda) desde el símbolo inicial
 - Algoritmo inteligente que evita recursión infinita
 - Control de profundidad máxima
 - Historial paso a paso de la derivación
 
-### 2. **Generación de Casos Inválidos** ✅ (Mutación Sintáctica)
+### 2. Generación de Casos Inválidos (Mutación Sintáctica)
 - **Paréntesis desbalanceados**: Elimina o agrega paréntesis
 - **Operadores duplicados**: `id + + id`
 - **Operador al inicio**: `+ id * id`
@@ -467,7 +467,7 @@ El sistema implementa derivación formal, mutación sintáctica y generación de
 - **Carácter inválido**: `id @ id`
 - **Espacios en medio de token**: `i d + id`
 
-### 3. **Generación de Casos Extremos** ✅
+### 3. Generación de Casos Extremos
 - **Profundidad máxima**: Derivación muy profunda
 - **Profundidad mínima**: Caso más simple posible
 - **Complejidad máxima**: Máximo número de operadores
@@ -475,19 +475,19 @@ El sistema implementa derivación formal, mutación sintáctica y generación de
 - **Expresión corta**: Mínima expresión válida
 - **Anidamiento máximo**: Múltiples niveles de paréntesis
 
-### 4. **Sistema de Clasificación Automática** ✅
+### 4. Sistema de Clasificación Automática
 - Categoriza cada caso: válido/inválido/extremo
 - Metadata completa: profundidad, operadores, longitud, etc.
 - IDs únicos para cada caso
 
-### 5. **Exportación a JSON** ✅
+### 5. Exportación a JSON
 - Formato estructurado con toda la información
 - Incluye gramática utilizada
 - Métricas completas del proceso
 - Configuración de generación
 - Timestamp y versión
 
-### 6. **Sistema de Métricas** ✅
+### 6. Sistema de Métricas
 - **Distribución porcentual** por categoría
 - **Longitud promedio** de expresiones
 - **Profundidad máxima** del árbol sintáctico
@@ -496,7 +496,7 @@ El sistema implementa derivación formal, mutación sintáctica y generación de
 - **Tipos de casos extremos** generados
 - **Tiempo de ejecución**
 
-### 7. **Parser de Gramáticas desde TXT** ✅
+### 7. Parser de Gramáticas desde TXT
 - Carga gramáticas desde archivos de texto
 - Formato simple: `E -> E + T`
 - Soporta comentarios con `#`
@@ -504,7 +504,7 @@ El sistema implementa derivación formal, mutación sintáctica y generación de
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
 ```
 Gramática G (TXT) ──> ParserGramatica
@@ -532,11 +532,11 @@ Gramática G (TXT) ──> ParserGramatica
 
 ---
 
-## 🎯 Casos de Uso
+## Casos de Uso
 
-### **Uso 1: Generar 1 Caso Válido con Historial**
+### Uso 1: Generar 1 Caso Válido con Historial
 1. Ajusta la **profundidad máxima** (default: 20)
-2. Click en **"🔍 Caso Válido + Historial"**
+2. Click en **"Caso Válido + Historial"**
 3. Ver derivación paso a paso en panel derecho
 
 **Resultado:**
@@ -550,14 +550,14 @@ Paso 5: id + F (aplicando: T → F)
 Paso 6: id + id (aplicando: F → id)
 ```
 
-### **Uso 2: Generar Múltiples Casos Válidos**
+### Uso 2: Generar Múltiples Casos Válidos
 1. Configura **cantidad de casos válidos** (slider)
-2. Click en **"✓ Casos Válidos"**
+2. Click en **"Casos Válidos"**
 3. Ver lista de expresiones generadas
 
-### **Uso 3: Generar Casos Inválidos**
+### Uso 3: Generar Casos Inválidos
 1. Configura **cantidad de casos inválidos**
-2. Click en **"✗ Casos Inválidos"**
+2. Click en **"Casos Inválidos"**
 3. Ver mutaciones con tipo entre corchetes:
    ```
    [OperadorDuplicado] id + + id
@@ -565,9 +565,9 @@ Paso 6: id + id (aplicando: F → id)
    [CaracterInvalido] id @ id
    ```
 
-### **Uso 4: Generar Suite Completa**
+### Uso 4: Generar Suite Completa
 1. Configura cantidades deseadas
-2. Click en **"🎯 Generar Todo"**
+2. Click en **"Generar Todo"**
 3. Sistema genera:
    - N casos válidos
    - M casos inválidos
@@ -576,39 +576,39 @@ Paso 6: id + id (aplicando: F → id)
 
 **Ejemplo de Métricas:**
 ```
-╔═══════════════════════════════════════════════════════════════╗
-║          REPORTE DE MÉTRICAS - GENERACIÓN DE CASOS           ║
-╚═══════════════════════════════════════════════════════════════╝
++===============================================================+
+|          REPORTE DE MÉTRICAS - GENERACIÓN DE CASOS           |
++===============================================================+
 
-📊 RESUMEN GENERAL
-─────────────────────────────────────────────────────────────
+RESUMEN GENERAL
+-----------------------------------------------------------------
   Total de casos generados: 21
   Tiempo de ejecución: 245 ms
   Tiempo promedio por caso: 11.67 ms
 
-📈 DISTRIBUCIÓN POR CATEGORÍA
-─────────────────────────────────────────────────────────────
-  ✓ Válidos:        5 ( 23.8%)
-  ✗ Inválidos:      5 ( 23.8%)
-  ⚡ Extremos:      11 ( 52.4%)
+DISTRIBUCIÓN POR CATEGORÍA
+-----------------------------------------------------------------
+  Válidos:        5 ( 23.8%)
+  Inválidos:      5 ( 23.8%)
+  Extremos:      11 ( 52.4%)
 
-📏 ESTADÍSTICAS DE LONGITUD (tokens)
-─────────────────────────────────────────────────────────────
+ESTADÍSTICAS DE LONGITUD (tokens)
+-----------------------------------------------------------------
   Promedio: 7.52
   Mínima:   1
   Máxima:   15
 
-➕ OPERADORES GENERADOS
-─────────────────────────────────────────────────────────────
+OPERADORES GENERADOS
+-----------------------------------------------------------------
   +   :    12 ( 48.0%)
   *   :    10 ( 40.0%)
   -   :     3 ( 12.0%)
   Total: 25
 ```
 
-### **Uso 5: Exportar a JSON**
+### Uso 5: Exportar a JSON
 1. Después de generar suite completa
-2. Click en **"💾 Exportar JSON"**
+2. Click en **"Exportar JSON"**
 3. Archivo se guarda en **carpeta del proyecto**
 4. Nombre: `casos_prueba_YYYYMMDD_HHMMSS.json`
 
@@ -647,13 +647,13 @@ Paso 6: id + id (aplicando: F → id)
 
 ---
 
-## 🚀 Cómo Ejecutar
+## Cómo Ejecutar
 
-### **Requisitos:**
+### Requisitos:
 - .NET SDK 8.0 o superior
 - Windows (aplicación de escritorio)
 
-### **Pasos:**
+### Pasos:
 ```powershell
 # 1. Clonar/Descargar el proyecto
 cd miniproyecto2_info1148
@@ -670,7 +670,7 @@ dotnet run
 
 ---
 
-## 📂 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 miniproyecto2_info1148/
@@ -697,16 +697,16 @@ miniproyecto2_info1148/
 
 ---
 
-## 🎨 Interfaz de Usuario
+## Interfaz de Usuario
 
-### **Panel Izquierdo - Configuración:**
+### Panel Izquierdo - Configuración:
 - Slider de profundidad máxima (5-100)
 - Slider de casos válidos (1-20)
 - Slider de casos inválidos (1-20)
 - Botones de acciones rápidas
 - Botones de suite completa
 
-### **Panel Derecho - Resultados:**
+### Panel Derecho - Resultados:
 - Resumen de generación
 - Lista de casos generados
 - Historial de derivación (cuando aplica)
@@ -714,7 +714,7 @@ miniproyecto2_info1148/
 
 ---
 
-## 📊 Métricas Calculadas
+## Métricas Calculadas
 
 1. **Cantidad total** de casos generados
 2. **Distribución porcentual** (válidos/inválidos/extremos)
@@ -727,7 +727,7 @@ miniproyecto2_info1148/
 
 ---
 
-## 🧪 Ejemplo de Gramática TXT
+## Ejemplo de Gramática TXT
 
 Crea un archivo `gramatica.txt`:
 
@@ -745,7 +745,7 @@ F -> id
 
 ---
 
-## 🔧 Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 - **Lenguaje:** C# 12
 - **Framework:** .NET 8.0
@@ -755,32 +755,32 @@ F -> id
 
 ---
 
-## 📝 Notas Técnicas
+## Notas Técnicas
 
-### **Derivación Leftmost:**
+### Derivación Leftmost:
 - Expande siempre el no terminal más a la izquierda
 - Evita recursión infinita usando límite de profundidad
 - Algoritmo inteligente que prefiere producciones terminales cerca del límite
 
-### **Mutación Sintáctica:**
+### Mutación Sintáctica:
 - 9 tipos diferentes de mutaciones
 - Basadas en errores comunes en parsers
 - Preservan cierta estructura de la cadena original
 
-### **Casos Extremos:**
+### Casos Extremos:
 - Buscan límites del sistema
 - Útiles para stress testing
 - Cubren edge cases importantes
 
 ---
 
-## 👨‍💻 Autor
+## Autor
 
 Proyecto desarrollado para INFO1148 - Teoría de la Computación
 Semestre II-2025
 
 ---
 
-## 📄 Licencia
+## Licencia
 
 Ver archivo `LICENSE` en el repositorio.
